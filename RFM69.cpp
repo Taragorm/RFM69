@@ -137,7 +137,12 @@ bool RFM69::initialize(uint8_t freqBand, uint16_t nodeID, uint8_t networkID) {
   start = millis();
   while (((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00) && millis()-start < timeout); // wait for ModeReady
   if (millis()-start >= timeout) return false;
+
+#ifndef RFM69_EXT_INTERRUPT  
+  // if we define this, we must attach the interrupt manually
+  // and call RFM69::isr0()
   attachInterrupt(_interruptNum, RFM69::isr0, RISING);
+#endif
 
   _address = nodeID;
   _networkID = networkID;
@@ -463,12 +468,14 @@ void RFM69::interruptHandler() {
   RSSI = readRSSI();
 }
 
+#ifndef RFM69_EXT_INTERRUPT
 // internal function
 ISR_PREFIX void RFM69::isr0() {
   _haveData = true;
   if (_instance->_isrCallback)
     _instance->_isrCallback();
 }
+#endif
 
 // internal function
 void RFM69::receiveBegin() {

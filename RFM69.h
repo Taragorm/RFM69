@@ -256,8 +256,21 @@ class RFM69 {
     virtual void select();
     virtual void unselect();
 
+#ifdef RFM69_EXT_INTERRUPT
+  public:
+    //
+    // inline defn so we can reduce the call overhead, maybe
+    static inline void isr0()
+    {
+      _haveData = true;
+      if (_instance->_isrCallback)
+        _instance->_isrCallback();
+    }  
+#else
   protected:
     static void isr0();
+#endif
+  protected:
     void interruptHandler();
     virtual void interruptHook(uint8_t CTLbyte __attribute__((unused))) {};
     static volatile bool _haveData;
