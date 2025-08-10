@@ -969,6 +969,7 @@ void RFM69::readAllRegsCompact() {
     Serial.print(ret, HEX);
     Serial.print(" ");
   }
+  Serial.println();
 }
 
 uint8_t RFM69::readTemperature(uint8_t calFactor) { // returns centigrade
@@ -1075,6 +1076,7 @@ void RFM69::endListenModeSleep() {
 // delayIRQ() - called by listenModeSleep()
 //=============================================================================
 void RFM69::delayIrq() { return; }
+
 
 //=============================================================================
 //                     ListenMode specific functions  
